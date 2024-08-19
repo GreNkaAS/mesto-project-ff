@@ -8,25 +8,39 @@
 
 // @todo: Вывести карточки на страницу
 
-const cardTemplate = document.querySelector("#card-template").content;
+// =================================================================================================
+const cardTemplate = document
+  .querySelector("#card-template")
+  .content.querySelector(".places__item");
+// =================================================================================================
+const createCard = (data, onDelete) => {
+  const cardElement = cardTemplate.cloneNode(true);
 
-const container = document.querySelector(".places__list");
+  const cardImage = cardElement.querySelector(".card__image");
+  const cardTitle = cardElement.querySelector(".card__title");
+  const deleteButton = cardElement.querySelector(".card__delete-button");
 
-initialCards.forEach((cardData) => {
-  const clone = cardTemplate.cloneNode(true);
+  cardImage.src = data.link;
+  cardImage.alt = data.name;
+  cardTitle.textContent = data.name;
 
-  const cardImage = clone.querySelector(".card__image");
-  const cardTitle = clone.querySelector(".card__title");
-  const deleteButton = clone.querySelector(".card__delete-button");
-
-  cardImage.src = cardData.link;
-  cardImage.alt = cardData.name;
-  cardTitle.textContent = cardData.name;
-
-  deleteButton.addEventListener("click", function (event) {
-    const cardItem = event.target.closest(".places__item");
-    cardItem.remove();
+  deleteButton.addEventListener("click", () => {
+    onDelete(cardElement);
   });
 
-  container.append(clone);
+  return cardElement;
+};
+// =================================================================================================
+const handleDelete = (cardElement) => {
+  cardElement.remove();
+};
+// =================================================================================================
+const renderCard = (cardElement) => {
+  const cardsContainer = document.querySelector(".places__list");
+  cardsContainer.append(cardElement);
+};
+// =================================================================================================
+initialCards.forEach((card) => {
+  const cardElement = createCard(card, handleDelete);
+  renderCard(cardElement);
 });
