@@ -7,7 +7,9 @@ import avatarPath from "../images/avatar.jpg"; // Импорт изображе�
 
 // Установка изображений логотипа и аватара
 document.querySelector(".header__logo").src = logoPath;
-document.querySelector(".profile__image").style.backgroundImage = `url(${avatarPath})`;
+document.querySelector(
+  ".profile__image"
+).style.backgroundImage = `url(${avatarPath})`;
 
 // Объявление глобальных констант и переменных
 const cardsContainer = document.querySelector(".places__list");
@@ -19,18 +21,19 @@ const closeButtons = document.querySelectorAll(".popup__close");
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
 const inputName = popupEdit.querySelector(".popup__input_type_name");
-const inputDescription = popupEdit.querySelector(".popup__input_type_description");
+const inputDescription = popupEdit.querySelector(
+  ".popup__input_type_description"
+);
 const formEditProfile = document.querySelector(".popup_type_edit .popup__form");
 const formAddCard = document.querySelector(".popup_type_new-card .popup__form");
 const placeName = popupNewCard.querySelector("input[name='place-name']");
 const placeLink = popupNewCard.querySelector("input[name='link']");
+const popupImage = document.querySelector(".popup_type_image");
+const imagePopupImage = popupImage.querySelector(".popup__image");
+const imagePopupCaption = popupImage.querySelector(".popup__caption");
 
 // Функция для открытия окна просмотра изображения карточки
 function handleCardClick(imageSrc, imageAlt) {
-  const popupImage = document.querySelector(".popup_type_image");
-  const imagePopupImage = popupImage.querySelector(".popup__image");
-  const imagePopupCaption = popupImage.querySelector(".popup__caption");
-
   imagePopupImage.src = imageSrc;
   imagePopupImage.alt = imageAlt;
   imagePopupCaption.textContent = imageAlt;
@@ -40,7 +43,12 @@ function handleCardClick(imageSrc, imageAlt) {
 
 // Отображение начальных карточек
 initialCards.forEach((card) => {
-  const cardElement = createCard(card, handleDelete, handleCardClick, handleLikeClick);
+  const cardElement = createCard(
+    card,
+    handleDelete,
+    handleCardClick,
+    handleLikeClick
+  );
   cardsContainer.append(cardElement);
 });
 
@@ -86,7 +94,6 @@ formAddCard.addEventListener("submit", (evt) => {
     handleLikeClick
   );
   cardsContainer.prepend(newCard);
-  placeName.value = "";
-  placeLink.value = "";
+  formAddCard.reset();
   closePopup(popupNewCard);
 });
