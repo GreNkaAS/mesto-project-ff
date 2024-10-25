@@ -4,6 +4,7 @@ import { createCard, handleDelete, handleLikeClick } from "../components/card";
 import { openPopup, closePopup } from "../components/modal";
 import logoPath from "../images/logo.svg"; // Импорт изображения логотипа
 import avatarPath from "../images/avatar.jpg"; // Импорт изображения аватара
+import { validateName, validateDescription } from "../components/validation";
 
 // Установка изображений логотипа и аватара
 document.querySelector(".header__logo").src = logoPath;
@@ -97,3 +98,7 @@ formAddCard.addEventListener("submit", (evt) => {
   formAddCard.reset();
   closePopup(popupNewCard);
 });
+
+// Вызываем функции валидации и передаем элементы
+validateName(nameInput);
+validateDescription(descriptionInput);
