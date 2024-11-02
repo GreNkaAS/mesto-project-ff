@@ -14,7 +14,7 @@
   margin-top: 48px;
 }
 
-.popup__button:hover {
+.popup__button:not(.popup__button_disabled):hover {
   background: rgba(0, 0, 0, 0.8);
   cursor: pointer;
 }
@@ -25,3 +25,11 @@
     line-height: 17px;
   }
 }
+
+.popup__button_disabled {
+  background-color: transparent; /* Прозрачный фон */
+  color: #ccc; /* Серый цвет текста */
+  border: 1px solid #ccc; /* Серый цвет рамки */
+  cursor: not-allowed;
+}
+
