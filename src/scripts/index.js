@@ -69,8 +69,8 @@ editButton.addEventListener("click", () => {
   inputElements.forEach((input) =>
     input.classList.remove("popup__input_error")
   );
-    // Проверка состояния кнопки "Сохранить"
-    toggleSaveButton();
+  // Проверка состояния кнопки "Сохранить"
+  toggleSaveButton();
 });
 
 addButton.addEventListener("click", () => {
@@ -101,7 +101,7 @@ formEditProfile.addEventListener("submit", (evt) => {
     profileTitle.textContent = inputName.value;
     profileDescription.textContent = inputDescription.value;
     closePopup(popupEdit);
-  }  
+  }
 });
 
 // Обработчик отправки формы добавления новой карточки
@@ -123,9 +123,11 @@ inputName.addEventListener("input", validateName);
 inputDescription.addEventListener("input", validateDescription);
 
 function toggleSaveButton() {
-  const isValid = validateName({ target: inputName }) && validateDescription({ target: inputDescription });
+  const isValid =
+    validateName({ target: inputName }) &&
+    validateDescription({ target: inputDescription });
   saveButton.disabled = !isValid; // Дизаблить кнопку, если поля не валидны
-  
+
   if (isValid) {
     saveButton.classList.remove("popup__button_disabled");
   } else {
@@ -133,7 +135,7 @@ function toggleSaveButton() {
   }
 }
 
-// Пример обработчиков событий для валидации
+// Обработчики событий для валидации
 inputName.addEventListener("input", () => {
   validateName({ target: inputName });
   toggleSaveButton(); // Проверка состояния кнопки
