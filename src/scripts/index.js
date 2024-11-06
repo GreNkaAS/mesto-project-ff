@@ -37,6 +37,7 @@ const popupImage = document.querySelector(".popup_type_image");
 const imagePopupImage = popupImage.querySelector(".popup__image");
 const imagePopupCaption = popupImage.querySelector(".popup__caption");
 
+
 // Функция для открытия окна просмотра изображения карточки
 function handleCardClick(imageSrc, imageAlt) {
   imagePopupImage.src = imageSrc;

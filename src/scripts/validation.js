@@ -53,6 +53,17 @@ function checkInputValidity(input, settings) {
     }
   }
 
+  // Проверка других полей, если нужно
+  if (input.name === "description") {
+    if (input.value.trim() === "") {
+      errorMessage = "Вы пропустили это поле.";
+    } else if (input.value.length < 2 || input.value.length > 200) {
+      errorMessage = "Описание должно содержать от 2 до 200 символов.";
+    } else if (!nameBioRegex.test(input.value)) {
+      errorMessage = "Допустимы только буквы, дефисы и пробелы.";
+    }
+  }
+
   showInputError(input, errorMessage, settings);
 }
 
@@ -66,18 +77,23 @@ function showInputError(input, message, settings) {
 
 // Управление состоянием кнопки "Сохранить"
 function toggleButtonState(inputs, button, settings) {
-  const isPlaceNameValid = Array.from(inputs).some(
-    (input) => input.name === "place-name" && placeNameRegex.test(input.value)
+  // Проверка, что каждое поле валидно
+  const isPlaceNameValid = Array.from(inputs).every(
+    (input) => input.name !== "place-name" || placeNameRegex.test(input.value)
   );
-  const isLinkValid = Array.from(inputs).some(
-    (input) => input.name === "link" && urlRegex.test(input.value)
+  const isLinkValid = Array.from(inputs).every(
+    (input) => input.name !== "link" || urlRegex.test(input.value)
+  );
+  const isDescriptionValid = Array.from(inputs).every(
+    (input) => input.name !== "description" || (input.value.length >= 2 && input.value.length <= 200 && nameBioRegex.test(input.value))
   );
 
+  // Если все поля валидны, кнопка активируется
   button.classList.toggle(
     settings.inactiveButtonClass,
-    !(isPlaceNameValid && isLinkValid)
+    !(isPlaceNameValid && isLinkValid && isDescriptionValid)
   );
-  button.disabled = !(isPlaceNameValid && isLinkValid);
+  button.disabled = !(isPlaceNameValid && isLinkValid && isDescriptionValid);
 }
 
 // Очистка ошибок при открытии формы
