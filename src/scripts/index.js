@@ -4,7 +4,11 @@ import { createCard, handleDelete, handleLikeClick } from "../components/card";
 import { openPopup, closePopup } from "../components/modal";
 import logoPath from "../images/logo.svg"; // Импорт изображения логотипа
 import avatarPath from "../images/avatar.jpg"; // Импорт изображения аватара
-import { validateName, validateDescription } from "./validation";
+import {
+  enableValidation,
+  clearValidation,
+  validationSettings,
+} from "./validation";
 
 // Установка изображений логотипа и аватара
 document.querySelector(".header__logo").src = logoPath;
@@ -32,7 +36,6 @@ const placeLink = popupNewCard.querySelector("input[name='link']");
 const popupImage = document.querySelector(".popup_type_image");
 const imagePopupImage = popupImage.querySelector(".popup__image");
 const imagePopupCaption = popupImage.querySelector(".popup__caption");
-const saveButton = popupEdit.querySelector(".popup__button");
 
 // Функция для открытия окна просмотра изображения карточки
 function handleCardClick(imageSrc, imageAlt) {
@@ -54,27 +57,21 @@ initialCards.forEach((card) => {
   cardsContainer.append(cardElement);
 });
 
+enableValidation(validationSettings);
+
 // Обработчики событий для открытия и закрытия попапов
 editButton.addEventListener("click", () => {
   openPopup(popupEdit);
   inputName.value = profileTitle.textContent;
   inputDescription.value = profileDescription.textContent;
 
-  // Очистка сообщений об ошибках
-  const errorMessages = popupEdit.querySelectorAll(".error-message");
-  errorMessages.forEach((message) => (message.textContent = ""));
-
-  // Удаление классов ошибок у полей ввода
-  const inputElements = popupEdit.querySelectorAll(".popup__input");
-  inputElements.forEach((input) =>
-    input.classList.remove("popup__input_error")
-  );
-  // Проверка состояния кнопки "Сохранить"
-  toggleSaveButton();
+  // Очистка сообщений об ошибках перед открытием
+  clearValidation(popupEdit, validationSettings);
 });
 
 addButton.addEventListener("click", () => {
   openPopup(popupNewCard);
+  clearValidation(popupNewCard, validationSettings); // Очистка валидации при открытии формы
 });
 
 closeButtons.forEach((button) => {
@@ -93,15 +90,9 @@ document.querySelectorAll(".popup").forEach((popup) => {
 // Обработчик отправки формы редактирования профиля
 formEditProfile.addEventListener("submit", (evt) => {
   evt.preventDefault();
-
-  const isNameValid = validateName({ target: inputName });
-  const isDescriptionValid = validateDescription({ target: inputDescription });
-
-  if (isNameValid && isDescriptionValid) {
-    profileTitle.textContent = inputName.value;
-    profileDescription.textContent = inputDescription.value;
-    closePopup(popupEdit);
-  }
+  profileTitle.textContent = inputName.value;
+  profileDescription.textContent = inputDescription.value;
+  closePopup(popupEdit);
 });
 
 // Обработчик отправки формы добавления новой карточки
@@ -118,30 +109,4 @@ formAddCard.addEventListener("submit", (evt) => {
   closePopup(popupNewCard);
 });
 
-// Валидация при вводе данных
-inputName.addEventListener("input", validateName);
-inputDescription.addEventListener("input", validateDescription);
-
-function toggleSaveButton() {
-  const isValid =
-    validateName({ target: inputName }) &&
-    validateDescription({ target: inputDescription });
-  saveButton.disabled = !isValid; // Дизаблить кнопку, если поля не валидны
-
-  if (isValid) {
-    saveButton.classList.remove("popup__button_disabled");
-  } else {
-    saveButton.classList.add("popup__button_disabled");
-  }
-}
-
-// Обработчики событий для валидации
-inputName.addEventListener("input", () => {
-  validateName({ target: inputName });
-  toggleSaveButton(); // Проверка состояния кнопки
-});
-
-inputDescription.addEventListener("input", () => {
-  validateDescription({ target: inputDescription });
-  toggleSaveButton(); // Проверка состояния кнопки
-});
+enableValidation(validationSettings);

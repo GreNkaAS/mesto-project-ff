@@ -1,75 +1,94 @@
-// const saveButton = popupEdit.querySelector(".popup__button");
+const validationSettings = {
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "error-message_visible",
+};
 
-const regex = /^[a-zA-Zа-яА-ЯёЁ\s-]+$/; // Разрешены только буквы латинского и кириллического алфавита, дефис и пробелы
-export function validateName(event) {
-  const inputElement = event.target;
-  const value = inputElement.value.trim();
-  const errorMessage = document.querySelector(".error-message_name");
+// Регулярные выражения для проверки допустимых символов
+const nameBioRegex = /^[a-zA-Zа-яА-ЯёЁ\s-]+$/; // Разрешены только буквы, дефисы и пробелы
+const placeNameRegex = /^[a-zA-Zа-яА-ЯёЁ\s-]{2,30}$/; // Название от 2 до 30 символов
+const urlRegex = /^(https?:\/\/[^\s]+)/; // Проверка на валидный URL
 
-  // Проверка на пустое значение
-  if (value === "") {
-    errorMessage.textContent = "Вы пропустили это поле.";
-    inputElement.classList.add("popup__input_error");
-    return false;
-  }
+// Основная функция включения валидации
+function enableValidation(settings) {
+  const forms = document.querySelectorAll(".popup__form");
+  forms.forEach((form) => {
+    const inputs = form.querySelectorAll(settings.inputSelector);
+    const submitButton = form.querySelector(settings.submitButtonSelector);
 
-  // Проверка на количество символов
-  if (value.length < 2) {
-    errorMessage.textContent = `Минимальное количество символов: 2. Текущее количество символов ${value.length}.`;
-    inputElement.classList.add("popup__input_error");
-    return false;
-  }
+    inputs.forEach((input) => {
+      input.addEventListener("input", () => {
+        checkInputValidity(input, settings);
+        toggleButtonState(inputs, submitButton, settings);
+      });
 
-  if (value.length > 40) {
-    errorMessage.textContent = `Максимальное количество символов: 40. Текущее количество символов ${value.length}.`;
-    inputElement.classList.add("popup__input_error");
-    return false;
-  }
-
-  if (!regex.test(value)) {
-    errorMessage.textContent =
-      "Имя может содержать только буквы латинского и кириллического алфавитов, дефисы и пробелы.";
-    inputElement.classList.add("popup__input_error");
-    return false;
-  }
-
-  errorMessage.textContent = ""; // Очистить сообщение об ошибке
-  inputElement.classList.remove("popup__input_error");
-  return true;
+      // Начальная проверка состояния кнопки
+      toggleButtonState(inputs, submitButton, settings);
+    });
+  });
 }
 
-export function validateDescription(event) {
-  const inputElement = event.target;
-  const value = inputElement.value.trim();
-  const errorMessage = document.querySelector(".error-message_description"); // Локальный элемент для описания
+// Проверка валидности конкретного поля
+function checkInputValidity(input, settings) {
+  let errorMessage = "";
 
-  // Проверка на пустое значение
-  if (value === "") {
-    errorMessage.textContent = "Вы пропустили это поле.";
-    inputElement.classList.add("popup__input_error");
-    return false;
+  // Проверка поля "Название"
+  if (input.name === "place-name") {
+    if (input.value.trim() === "") {
+      errorMessage = "Вы пропустили это поле.";
+    } else if (!placeNameRegex.test(input.value)) {
+      errorMessage =
+        "Название должно содержать от 2 до 30 символов и включать только буквы, дефисы и пробелы.";
+    }
   }
 
-  if (value.length < 2) {
-    errorMessage.textContent = `Минимальное количество символов: 2. Текущее количество символов ${value.length}.`;
-    inputElement.classList.add("popup__input_error");
-    return false;
+  // Проверка поля "Ссылка на картинку"
+  if (input.name === "link") {
+    if (input.value.trim() === "") {
+      errorMessage = "Вы пропустили это поле.";
+    } else if (!urlRegex.test(input.value)) {
+      errorMessage = "Введите корректный URL.";
+    }
   }
 
-  if (value.length > 200) {
-    errorMessage.textContent = `Максимальное количество символов: 200. Текущее количество символов ${value.length}.`;
-    inputElement.classList.add("popup__input_error");
-    return false;
-  }
-
-  if (!regex.test(value)) {
-    errorMessage.textContent =
-      "Описание может содержать только буквы латинского и кириллического алфавитов, дефисы и пробелы.";
-    inputElement.classList.add("popup__input_error");
-    return false;
-  }
-
-  errorMessage.textContent = ""; // Очистить сообщение об ошибке
-  inputElement.classList.remove("popup__input_error");
-  return true;
+  showInputError(input, errorMessage, settings);
 }
+
+// Функция для отображения сообщения об ошибке
+function showInputError(input, message, settings) {
+  const errorElement = document.querySelector(`.error-message_${input.name}`);
+  input.classList.toggle(settings.inputErrorClass, !!message);
+  errorElement.textContent = message || "";
+  errorElement.classList.toggle(settings.errorClass, !!message);
+}
+
+// Управление состоянием кнопки "Сохранить"
+function toggleButtonState(inputs, button, settings) {
+  const isPlaceNameValid = Array.from(inputs).some(
+    (input) => input.name === "place-name" && placeNameRegex.test(input.value)
+  );
+  const isLinkValid = Array.from(inputs).some(
+    (input) => input.name === "link" && urlRegex.test(input.value)
+  );
+
+  button.classList.toggle(
+    settings.inactiveButtonClass,
+    !(isPlaceNameValid && isLinkValid)
+  );
+  button.disabled = !(isPlaceNameValid && isLinkValid);
+}
+
+// Очистка ошибок при открытии формы
+function clearValidation(form, settings) {
+  const inputs = form.querySelectorAll(settings.inputSelector);
+  inputs.forEach((input) => showInputError(input, "", settings));
+  toggleButtonState(
+    inputs,
+    form.querySelector(settings.submitButtonSelector),
+    settings
+  );
+}
+
+export { enableValidation, clearValidation, validationSettings };
