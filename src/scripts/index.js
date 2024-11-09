@@ -10,6 +10,8 @@ import {
   validationSettings,
 } from "./validation";
 
+import { getInitialCards } from "./api";
+
 // Установка изображений логотипа и аватара
 document.querySelector(".header__logo").src = logoPath;
 document.querySelector(
@@ -37,7 +39,6 @@ const popupImage = document.querySelector(".popup_type_image");
 const imagePopupImage = popupImage.querySelector(".popup__image");
 const imagePopupCaption = popupImage.querySelector(".popup__caption");
 
-
 // Функция для открытия окна просмотра изображения карточки
 function handleCardClick(imageSrc, imageAlt) {
   imagePopupImage.src = imageSrc;
@@ -47,16 +48,32 @@ function handleCardClick(imageSrc, imageAlt) {
   openPopup(popupImage);
 }
 
-// Отображение начальных карточек
-initialCards.forEach((card) => {
-  const cardElement = createCard(
-    card,
-    handleDelete,
-    handleCardClick,
-    handleLikeClick
-  );
-  cardsContainer.append(cardElement);
-});
+// // Отображение начальных карточек
+// initialCards.forEach((card) => {
+//   const cardElement = createCard(
+//     card,
+//     handleDelete,
+//     handleCardClick,
+//     handleLikeClick
+//   );
+//   cardsContainer.append(cardElement);
+// });
+// Загрузка и отображение карточек с сервера
+getInitialCards()
+  .then((cards) => {
+    cards.forEach((card) => {
+      const cardElement = createCard(
+        card,
+        handleDelete,
+        handleCardClick,
+        handleLikeClick
+      );
+      cardsContainer.append(cardElement);
+    });
+  })
+  .catch((err) => {
+    console.log("Ошибка при получении данных:", err);
+  });
 
 enableValidation(validationSettings);
 
