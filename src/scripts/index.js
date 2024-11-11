@@ -10,7 +10,7 @@ import {
   validationSettings,
 } from "./validation";
 
-import { getInitialCards } from "./api";
+import { getInitialCards, getUserProfile } from './api';
 
 // Установка изображений логотипа и аватара
 document.querySelector(".header__logo").src = logoPath;
@@ -59,11 +59,21 @@ function handleCardClick(imageSrc, imageAlt) {
 //   cardsContainer.append(cardElement);
 // });
 // Загрузка и отображение карточек с сервера
-getInitialCards()
+let currentUserId; // переменная для хранения ID текущего пользователя
+
+// Получаем ID пользователя и начальные карточки
+getUserProfile()
+  .then((userData) => {
+    currentUserId = userData._id; // сохраняем ID текущего пользователя
+    
+    // Загружаем карточки после получения ID пользователя
+    return getInitialCards();
+  })
   .then((cards) => {
     cards.forEach((card) => {
       const cardElement = createCard(
         card,
+        currentUserId, // передаем currentUserId
         handleDelete,
         handleCardClick,
         handleLikeClick
@@ -74,6 +84,22 @@ getInitialCards()
   .catch((err) => {
     console.log("Ошибка при получении данных:", err);
   });
+
+// getInitialCards()
+//   .then((cards) => {
+//     cards.forEach((card) => {
+//       const cardElement = createCard(
+//         card,
+//         handleDelete,
+//         handleCardClick,
+//         handleLikeClick
+//       );
+//       cardsContainer.append(cardElement);
+//     });
+//   })
+//   .catch((err) => {
+//     console.log("Ошибка при получении данных:", err);
+//   });
 
 enableValidation(validationSettings);
 
@@ -116,6 +142,7 @@ formEditProfile.addEventListener("submit", (evt) => {
 // Обработчик отправки формы добавления новой карточки
 formAddCard.addEventListener("submit", (evt) => {
   evt.preventDefault();
+
   const newCard = createCard(
     { name: placeName.value, link: placeLink.value },
     handleDelete,

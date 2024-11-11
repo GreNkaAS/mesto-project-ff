@@ -4,7 +4,7 @@ const cardTemplate = document
   .content.querySelector(".places__item");
 
 // Создаём карточку
-const createCard = (data, onDelete, onClickImage, onLike) => {
+const createCard = (data, currentUserId, onDelete, onClickImage, onLike) => {
   const cardElement = getCardTemplate();
 
   const cardImage = cardElement.querySelector(".card__image");
@@ -15,6 +15,11 @@ const createCard = (data, onDelete, onClickImage, onLike) => {
   cardImage.src = data.link;
   cardImage.alt = data.name;
   cardTitle.textContent = data.name;
+
+  // Условие для отображения иконки удаления только на карточках текущего пользователя
+  if (data.owner._id !== currentUserId) {
+    deleteButton.style.display = "none"; // скрываем кнопку удаления, если карточка не наша
+  }
 
   // Обработчики событий
   cardImage.addEventListener("click", () => onClickImage(data.link, data.name));

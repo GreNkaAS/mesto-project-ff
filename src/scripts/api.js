@@ -22,3 +22,19 @@ export const getInitialCards = () => {
       console.log(err); // обрабатываем ошибку
     });
 };
+
+// api.js
+export const getUserProfile = () => {
+  return fetch(`${config.baseUrl}/users/me`, {
+    headers: config.headers,
+  })
+    .then(res => {
+      if (res.ok) {
+        return res.json();
+      }
+      return Promise.reject(`Ошибка: ${res.status}`);
+    })
+    .catch(err => {
+      console.log('Ошибка при получении данных профиля:', err);
+    });
+};
