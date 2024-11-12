@@ -56,12 +56,12 @@
         <form class="popup__form" name="new-place">
           <input type="text" name="place-name" class="popup__input popup__input_type_card-name" placeholder="Название"
             required>
-            <span class="error-message error-message_place-name">
-            </span>
+          <span class="error-message error-message_place-name">
+          </span>
           <input type="url" name="link" class="popup__input popup__input_type_url" placeholder="Ссылка на картинку"
             required>
-            <span class="error-message error-message_link">
-            </span>
+          <span class="error-message error-message_link">
+          </span>
           <button type="submit" class="button popup__button">Сохранить</button>
         </form>
       </div>
@@ -82,7 +82,10 @@
       <div class="card__description">
         <h2 class="card__title">
         </h2>
-        <button type="button" class="card__like-button"></button>
+        <div class="card__like-box">
+          <button type="button" class="card__like-button"></button>
+          <span class="card__like-count">0</span>
+        </div>
       </div>
     </li>
   </template>

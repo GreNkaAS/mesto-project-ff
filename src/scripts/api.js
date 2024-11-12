@@ -38,3 +38,53 @@ export const getUserProfile = () => {
       console.log('Ошибка при получении данных профиля:', err);
     });
 };
+
+// api.js
+export const addCard = (cardData) => {
+  return fetch(`${config.baseUrl}/cards`, {
+    method: 'POST',
+    headers: config.headers,
+    body: JSON.stringify(cardData)
+  })
+    .then(res => {
+      if (res.ok) {
+        return res.json();
+      }
+      return Promise.reject(`Ошибка: ${res.status}`);
+    })
+    .catch(err => {
+      console.log('Ошибка при добавлении карточки:', err);
+    });
+};
+
+// api.js
+export const deleteCard = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/${cardId}`, {
+    method: 'DELETE',
+    headers: config.headers,
+  })
+    .then(res => {
+      if (res.ok) {
+        return res.json();
+      }
+      return Promise.reject(`Ошибка: ${res.status}`);
+    })
+    .catch(err => {
+      console.log('Ошибка при удалении карточки:', err);
+    });
+};
+
+// api.js
+export const toggleLike = (cardId, isLiked) => {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
+    method: isLiked ? 'PUT' : 'DELETE',
+    headers: config.headers,
+  })
+    .then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      return Promise.reject(`Ошибка: ${res.status}`);
+    });
+};
+

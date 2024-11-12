@@ -1,5 +1,4 @@
 import "../pages/index.css"; // Импорт стилей
-import { initialCards } from "./cards"; // Импорт массива с начальными карточками
 import { createCard, handleDelete, handleLikeClick } from "../components/card";
 import { openPopup, closePopup } from "../components/modal";
 import logoPath from "../images/logo.svg"; // Импорт изображения логотипа
@@ -10,7 +9,7 @@ import {
   validationSettings,
 } from "./validation";
 
-import { getInitialCards, getUserProfile } from "./api";
+import { getInitialCards, getUserProfile, addCard } from "./api";
 
 // Установка изображений логотипа и аватара
 document.querySelector(".header__logo").src = logoPath;
@@ -48,20 +47,9 @@ function handleCardClick(imageSrc, imageAlt) {
   openPopup(popupImage);
 }
 
-// // Отображение начальных карточек
-// initialCards.forEach((card) => {
-//   const cardElement = createCard(
-//     card,
-//     handleDelete,
-//     handleCardClick,
-//     handleLikeClick
-//   );
-//   cardsContainer.append(cardElement);
-// });
 // Загрузка и отображение карточек с сервера
 let currentUserId; // переменная для хранения ID текущего пользователя
 
-// Получаем ID пользователя и начальные карточки
 getUserProfile()
   .then((userData) => {
     currentUserId = userData._id; // сохраняем ID текущего пользователя
@@ -74,7 +62,7 @@ getUserProfile()
       const cardElement = createCard(
         card,
         currentUserId, // передаем currentUserId
-        handleDelete,
+        (element) => handleDelete(element, card._id), // передаём card._id
         handleCardClick,
         handleLikeClick
       );
@@ -85,21 +73,6 @@ getUserProfile()
     console.log("Ошибка при получении данных:", err);
   });
 
-// getInitialCards()
-//   .then((cards) => {
-//     cards.forEach((card) => {
-//       const cardElement = createCard(
-//         card,
-//         handleDelete,
-//         handleCardClick,
-//         handleLikeClick
-//       );
-//       cardsContainer.append(cardElement);
-//     });
-//   })
-//   .catch((err) => {
-//     console.log("Ошибка при получении данных:", err);
-//   });
 
 enableValidation(validationSettings);
 
@@ -139,11 +112,43 @@ formEditProfile.addEventListener("submit", (evt) => {
   closePopup(popupEdit);
 });
 
+// // Обработчик отправки формы добавления новой карточки
+// formAddCard.addEventListener("submit", (evt) => {
+//   evt.preventDefault();
+
+//   // Проверяем, что currentUserId определен и создаем объект с owner._id
+//   if (!currentUserId) {
+//     console.log("Ошибка: currentUserId не определен");
+//     return;
+//   }
+
+//   const newCardData = {
+//     name: placeName.value,
+//     link: placeLink.value,
+//     owner: { _id: currentUserId }, // Убедимся, что owner имеет _id
+//   };
+
+//   // Создаем карточку, передавая currentUserId
+//   const newCardElement = createCard(
+//     newCardData, // Передаем объект с данными карточки, включая owner._id
+//     currentUserId, // Передаем ID текущего пользователя
+//     handleDelete,
+//     handleCardClick,
+//     handleLikeClick
+//   );
+
+//   // Добавляем новую карточку в начало контейнера
+//   cardsContainer.prepend(newCardElement);
+
+//   formAddCard.reset();
+//   closePopup(popupNewCard);
+// });
+
 // Обработчик отправки формы добавления новой карточки
 formAddCard.addEventListener("submit", (evt) => {
   evt.preventDefault();
 
-  // Проверяем, что currentUserId определен и создаем объект с owner._id
+  // Проверяем, что currentUserId определен
   if (!currentUserId) {
     console.log("Ошибка: currentUserId не определен");
     return;
@@ -152,32 +157,28 @@ formAddCard.addEventListener("submit", (evt) => {
   const newCardData = {
     name: placeName.value,
     link: placeLink.value,
-    owner: { _id: currentUserId }, // Убедимся, что owner имеет _id
+    owner: { _id: currentUserId }
   };
 
-  // const newCard = createCard(
-  //   { name: placeName.value, link: placeLink.value },
-  //   handleDelete,
-  //   handleCardClick,
-  //   handleLikeClick
-  // );
+  // Сохраняем карточку на сервере
+  addCard(newCardData)
+    .then((savedCard) => {
+      // После успешного сохранения на сервере создаем карточку на странице
+      const newCardElement = createCard(
+        savedCard,           // Используем данные с сервера, включая сгенерированный ID
+        currentUserId,       // Передаем ID текущего пользователя
+        handleDelete,
+        handleCardClick,
+        handleLikeClick
+      );
+      cardsContainer.prepend(newCardElement); // Добавляем карточку на страницу
 
-  // Создаем карточку, передавая currentUserId
-  const newCardElement = createCard(
-    newCardData, // Передаем объект с данными карточки, включая owner._id
-    currentUserId, // Передаем ID текущего пользователя
-    handleDelete,
-    handleCardClick,
-    handleLikeClick
-  );
-
-  // cardsContainer.prepend(newCard);
-  
-  // Добавляем новую карточку в начало контейнера
-  cardsContainer.prepend(newCardElement);
-
-  formAddCard.reset();
-  closePopup(popupNewCard);
+      formAddCard.reset(); // Сброс формы
+      closePopup(popupNewCard); // Закрытие попапа
+    })
+    .catch((err) => {
+      console.log("Ошибка при добавлении карточки на сервер:", err);
+    });
 });
 
 enableValidation(validationSettings);
