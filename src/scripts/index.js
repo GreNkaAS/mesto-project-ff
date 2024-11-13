@@ -1,5 +1,6 @@
 import "../pages/index.css"; // Импорт стилей
 import { createCard, handleDelete, handleLikeClick } from "../components/card";
+import { updateUserProfile } from "./api";
 import { openPopup, closePopup } from "../components/modal";
 import logoPath from "../images/logo.svg"; // Импорт изображения логотипа
 import avatarPath from "../images/avatar.jpg"; // Импорт изображения аватара
@@ -54,6 +55,10 @@ getUserProfile()
   .then((userData) => {
     currentUserId = userData._id; // сохраняем ID текущего пользователя
 
+    // Подставляем данные в элементы страницы
+    profileTitle.textContent = userData.name;
+    profileDescription.textContent = userData.about;
+
     // Загружаем карточки после получения ID пользователя
     return getInitialCards();
   })
@@ -72,7 +77,6 @@ getUserProfile()
   .catch((err) => {
     console.log("Ошибка при получении данных:", err);
   });
-
 
 enableValidation(validationSettings);
 
@@ -104,45 +108,28 @@ document.querySelectorAll(".popup").forEach((popup) => {
   });
 });
 
-// Обработчик отправки формы редактирования профиля
 formEditProfile.addEventListener("submit", (evt) => {
   evt.preventDefault();
-  profileTitle.textContent = inputName.value;
-  profileDescription.textContent = inputDescription.value;
-  closePopup(popupEdit);
+
+  // Получаем значения из полей формы
+  const name = inputName.value;
+  const about = inputDescription.value;
+
+  // Отправка данных на сервер для обновления профиля
+  updateUserProfile(name, about)
+    .then((data) => {
+      // Если обновление прошло успешно, обновляем информацию на странице
+      profileTitle.textContent = data.name;
+      profileDescription.textContent = data.about;
+
+      // Закрытие попапа редактирования профиля
+      closePopup(popupEdit);
+    })
+    .catch((err) => {
+      // Если произошла ошибка при отправке данных, показываем ошибку в консоли
+      console.log("Ошибка при обновлении профиля:", err);
+    });
 });
-
-// // Обработчик отправки формы добавления новой карточки
-// formAddCard.addEventListener("submit", (evt) => {
-//   evt.preventDefault();
-
-//   // Проверяем, что currentUserId определен и создаем объект с owner._id
-//   if (!currentUserId) {
-//     console.log("Ошибка: currentUserId не определен");
-//     return;
-//   }
-
-//   const newCardData = {
-//     name: placeName.value,
-//     link: placeLink.value,
-//     owner: { _id: currentUserId }, // Убедимся, что owner имеет _id
-//   };
-
-//   // Создаем карточку, передавая currentUserId
-//   const newCardElement = createCard(
-//     newCardData, // Передаем объект с данными карточки, включая owner._id
-//     currentUserId, // Передаем ID текущего пользователя
-//     handleDelete,
-//     handleCardClick,
-//     handleLikeClick
-//   );
-
-//   // Добавляем новую карточку в начало контейнера
-//   cardsContainer.prepend(newCardElement);
-
-//   formAddCard.reset();
-//   closePopup(popupNewCard);
-// });
 
 // Обработчик отправки формы добавления новой карточки
 formAddCard.addEventListener("submit", (evt) => {
@@ -157,7 +144,7 @@ formAddCard.addEventListener("submit", (evt) => {
   const newCardData = {
     name: placeName.value,
     link: placeLink.value,
-    owner: { _id: currentUserId }
+    owner: { _id: currentUserId },
   };
 
   // Сохраняем карточку на сервере
@@ -165,8 +152,8 @@ formAddCard.addEventListener("submit", (evt) => {
     .then((savedCard) => {
       // После успешного сохранения на сервере создаем карточку на странице
       const newCardElement = createCard(
-        savedCard,           // Используем данные с сервера, включая сгенерированный ID
-        currentUserId,       // Передаем ID текущего пользователя
+        savedCard, // Используем данные с сервера, включая сгенерированный ID
+        currentUserId, // Передаем ID текущего пользователя
         handleDelete,
         handleCardClick,
         handleLikeClick

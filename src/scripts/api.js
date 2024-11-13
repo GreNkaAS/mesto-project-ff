@@ -7,22 +7,6 @@ const config = {
   },
 };
 
-// Функция для получения карточек
-export const getInitialCards = () => {
-  return fetch(`${config.baseUrl}/cards`, {
-    headers: config.headers,
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .catch((err) => {
-      console.log(err); // обрабатываем ошибку
-    });
-};
-
 // api.js
 export const getUserProfile = () => {
   return fetch(`${config.baseUrl}/users/me`, {
@@ -36,6 +20,47 @@ export const getUserProfile = () => {
     })
     .catch(err => {
       console.log('Ошибка при получении данных профиля:', err);
+    });
+};
+
+
+// api.js
+
+// Функция для отправки обновленных данных профиля на сервер
+export const updateUserProfile = (name, about) => {
+  return fetch(`${config.baseUrl}/users/me`, {
+    method: 'PATCH',
+    headers: config.headers,
+    body: JSON.stringify({
+      name: name,
+      about: about,
+    }),
+  })
+    .then((res) => {
+      if (res.ok) {
+        return res.json();  // Возвращаем обновленные данные профиля
+      }
+      return Promise.reject(`Ошибка: ${res.status}`);
+    })
+    .catch((err) => {
+      console.log('Ошибка при обновлении профиля:', err);
+    });
+};
+
+
+// Функция для получения карточек
+export const getInitialCards = () => {
+  return fetch(`${config.baseUrl}/cards`, {
+    headers: config.headers,
+  })
+    .then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      return Promise.reject(`Ошибка: ${res.status}`);
+    })
+    .catch((err) => {
+      console.log(err); // обрабатываем ошибку
     });
 };
 
