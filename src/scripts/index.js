@@ -2,8 +2,6 @@ import "../pages/index.css"; // Импорт стилей
 import { createCard, handleDelete, handleLikeClick } from "../components/card";
 import { updateUserProfile } from "./api";
 import { openPopup, closePopup } from "../components/modal";
-import logoPath from "../images/logo.svg"; // Импорт изображения логотипа
-import avatarPath from "../images/avatar.jpg"; // Импорт изображения аватара
 import {
   enableValidation,
   clearValidation,
@@ -11,12 +9,6 @@ import {
 } from "./validation";
 
 import { getInitialCards, getUserProfile, addCard } from "./api";
-
-// Установка изображений логотипа и аватара
-document.querySelector(".header__logo").src = logoPath;
-document.querySelector(
-  ".profile__image"
-).style.backgroundImage = `url(${avatarPath})`;
 
 // Объявление глобальных констант и переменных
 const cardsContainer = document.querySelector(".places__list");
@@ -54,6 +46,11 @@ let currentUserId; // переменная для хранения ID текущ
 getUserProfile()
   .then((userData) => {
     currentUserId = userData._id; // сохраняем ID текущего пользователя
+
+    // Устанавливаем аватар пользователя
+    document.querySelector(
+      ".profile__image"
+    ).style.backgroundImage = `url(${userData.avatar})`;
 
     // Подставляем данные в элементы страницы
     profileTitle.textContent = userData.name;

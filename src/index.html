@@ -12,11 +12,15 @@
 <body class="page">
   <div class="page__content">
     <header class="header page__section">
-      <img src="" alt="Логотип проекта масто" class="logo header__logo">
+      <a href="#">
+        <img class="logo header__logo" src="<%=require('./images/logo.svg')%>" alt="логотип">
+      </a>
     </header>
     <main class="content">
       <section class="profile page__section">
-        <button class="profile__image" type="button" style="background-image: none;"></button>
+        <div class="profile__avatar">
+          <img src="<%=require('./images/avatar.jpg')%>" alt="Аватар пользователя" class="profile__image">
+        </div>
         <div class="profile__info">
           <h1 class="profile__title">Жак-Ив Кусто</h1>
           <button class="profile__edit-button" type="button"></button>
@@ -71,6 +75,18 @@
         <button type="button" class="popup__close"></button>
         <img src="" alt="" class="popup__image">
         <p class="popup__caption"></p>
+      </div>
+    </div>
+     <!-- Новый попап смены аватара -->
+     <div class="popup popup_type_avatar">
+      <div class="popup__content">
+        <button type="button" class="popup__close"></button>
+        <h3 class="popup__title">Обновить аватар</h3>
+        <form class="popup__form" name="avatar-form">
+          <input type="url" name="avatar" class="popup__input popup__input_type_avatar-url" placeholder="Ссылка на картинку" required>
+          <span class="error-message error-message_avatar-url"></span>
+          <button type="submit" class="button popup__button">Сохранить</button>
+        </form>
       </div>
     </div>
   </div>

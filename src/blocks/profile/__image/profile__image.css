@@ -1,4 +1,4 @@
-.profile__image {
+/* .profile__image {
   width: 120px;
   height: 120px;
   -webkit-border-radius: 50%;
@@ -8,7 +8,34 @@
   background-position: center;
   margin: 0 29px 0 0;
   cursor: pointer;
+} */
+
+.profile__avatar {
+  background-image: url("/src/images/pencil.svg");
+  background-color: #000;
+  background-position: 50%;
+  background-repeat: no-repeat;
+  border-radius: 60px;
+  height: 120px;
+  width: 120px;
+  margin: 0 29px 0 0;
+  transition: opacity 0.8s ease-in-out;
 }
+
+.profile__image {
+  height: 100%;
+  margin: 0;
+  border-radius: inherit;
+  object-fit: cover;
+  object-position: center;
+  width: 100%;
+  transition: opacity 0.5s ease-in-out;
+  }
+  
+  .profile__image:hover {
+    cursor: pointer;
+    opacity: 0.2;
+  }
 
 @media screen and (max-width: 740px) {
   .profile__image {
@@ -21,3 +48,5 @@
     margin-right: 0;
   }
 }
+
+
