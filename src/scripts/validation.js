@@ -63,7 +63,15 @@ function checkInputValidity(input, settings) {
       errorMessage = "Допустимы только буквы, дефисы и пробелы.";
     }
   }
-
+  // Проверка поля "Ссылка на картинку"
+  if (input.name === "avatar") {
+    // Для поля с URL
+    if (input.value.trim() === "") {
+      errorMessage = "Вы пропустили это поле.";
+    } else if (!urlRegex.test(input.value)) {
+      errorMessage = "Введите корректный URL.";
+    }
+  }
   showInputError(input, errorMessage, settings);
 }
 
@@ -85,15 +93,29 @@ function toggleButtonState(inputs, button, settings) {
     (input) => input.name !== "link" || urlRegex.test(input.value)
   );
   const isDescriptionValid = Array.from(inputs).every(
-    (input) => input.name !== "description" || (input.value.length >= 2 && input.value.length <= 200 && nameBioRegex.test(input.value))
+    (input) =>
+      input.name !== "description" ||
+      (input.value.length >= 2 &&
+        input.value.length <= 200 &&
+        nameBioRegex.test(input.value))
   );
 
-  // Если все поля валидны, кнопка активируется
+  // Проверка валидности поля "Ссылка на картинку" (avatar)
+  const isAvatarValid = Array.from(inputs).every(
+    (input) => input.name !== "avatar" || urlRegex.test(input.value)
+  );
+
+  // // Если все поля валидны, кнопка активируется
+  // button.classList.toggle(
+  //   settings.inactiveButtonClass,
+  //   !(isPlaceNameValid && isLinkValid && isDescriptionValid)
+  // );
+  // button.disabled = !(isPlaceNameValid && isLinkValid && isDescriptionValid);
   button.classList.toggle(
     settings.inactiveButtonClass,
-    !(isPlaceNameValid && isLinkValid && isDescriptionValid)
+    !(isPlaceNameValid && isLinkValid && isDescriptionValid && isAvatarValid)
   );
-  button.disabled = !(isPlaceNameValid && isLinkValid && isDescriptionValid);
+  button.disabled = !(isPlaceNameValid && isLinkValid && isDescriptionValid && isAvatarValid);  
 }
 
 // Очистка ошибок при открытии формы

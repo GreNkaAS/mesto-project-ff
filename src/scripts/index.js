@@ -1,6 +1,7 @@
 import "../pages/index.css"; // Импорт стилей
 import { createCard, handleDelete, handleLikeClick } from "../components/card";
 import { updateUserProfile } from "./api";
+import { updateAvatar } from './api'; // Проверьте правильность пути
 import { openPopup, closePopup } from "../components/modal";
 import {
   enableValidation,
@@ -31,6 +32,38 @@ const popupImage = document.querySelector(".popup_type_image");
 const imagePopupImage = popupImage.querySelector(".popup__image");
 const imagePopupCaption = popupImage.querySelector(".popup__caption");
 
+// Получаем элементы для аватара и попапа редактирования аватара
+const avatarElement = document.querySelector(".profile__avatar");
+const popupAvatar = document.querySelector(".popup_type_avatar");
+const avatarUrlInput = popupAvatar.querySelector(
+  ".popup__input_type_avatar-url"
+);
+const formAvatar = popupAvatar.querySelector(".popup__form");
+
+// Обработчик для открытия попапа смены аватара
+avatarElement.addEventListener("click", () => {
+  openPopup(popupAvatar);
+  avatarUrlInput.value = ""; // очищаем поле ввода перед открытием попапа
+  clearValidation(popupAvatar, validationSettings);
+});
+
+formAvatar.addEventListener("submit", (evt) => {
+  evt.preventDefault();
+
+  const avatarUrl = avatarUrlInput.value;
+
+  // Отправка новой ссылки на аватар на сервер
+  updateAvatar(avatarUrl)
+    .then((data) => {
+      // Обновляем аватар на странице
+      document.querySelector(".profile__image").src = data.avatar;
+      closePopup(popupAvatar); // Закрытие попапа после успешного обновления
+    })
+    .catch((err) => {
+      console.log("Ошибка при обновлении аватара:", err);
+    });
+});
+
 // Функция для открытия окна просмотра изображения карточки
 function handleCardClick(imageSrc, imageAlt) {
   imagePopupImage.src = imageSrc;
@@ -48,9 +81,7 @@ getUserProfile()
     currentUserId = userData._id; // сохраняем ID текущего пользователя
 
     // Устанавливаем аватар пользователя
-    document.querySelector(
-      ".profile__image"
-    ).style.backgroundImage = `url(${userData.avatar})`;
+    document.querySelector(".profile__image").src = userData.avatar;
 
     // Подставляем данные в элементы страницы
     profileTitle.textContent = userData.name;

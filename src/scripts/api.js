@@ -113,4 +113,23 @@ export const toggleLike = (cardId, isLiked) => {
     });
 };
 
+// Функция для обновления аватара пользователя
+export const updateAvatar = (avatarUrl) => {
+  return fetch(`${config.baseUrl}/users/me/avatar`, {
+    method: 'PATCH',
+    headers: config.headers,
+    body: JSON.stringify({
+      avatar: avatarUrl, // Отправляем ссылку на новый аватар
+    }),
+  })
+    .then((res) => {
+      if (res.ok) {
+        return res.json();  // Возвращаем обновленные данные, включая avatar
+      }
+      return Promise.reject(`Ошибка: ${res.status}`);
+    })
+    .catch((err) => {
+      console.log('Ошибка при обновлении аватара:', err);
+    });
+};
 
