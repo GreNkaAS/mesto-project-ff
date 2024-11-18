@@ -1,7 +1,8 @@
-import "../pages/index.css"; // Импорт стилей
+// Импорт необходимых модулей и стилей
+import "../pages/index.css";
 import { createCard, handleDelete, handleLikeClick } from "../components/card";
 import { updateUserProfile } from "./api";
-import { updateAvatar } from "./api"; // Проверьте правильность пути
+import { updateAvatar } from "./api";
 import { openPopup, closePopup } from "../components/modal";
 import {
   enableValidation,
@@ -11,7 +12,8 @@ import {
 
 import { getInitialCards, getUserProfile, addCard } from "./api";
 
-// Объявление глобальных констант и переменных
+// === Объявление глобальных констант и переменных ===
+// Селекторы DOM-элементов для попапов, форм, кнопок и других элементов интерфейса
 const cardsContainer = document.querySelector(".places__list");
 const editButton = document.querySelector(".profile__edit-button");
 const addButton = document.querySelector(".profile__add-button");
@@ -32,7 +34,6 @@ const popupImage = document.querySelector(".popup_type_image");
 const imagePopupImage = popupImage.querySelector(".popup__image");
 const imagePopupCaption = popupImage.querySelector(".popup__caption");
 const saveButtons = document.querySelectorAll(".popup__button");
-// Получаем элементы для аватара и попапа редактирования аватара
 const avatarElement = document.querySelector(".profile__avatar");
 const popupAvatar = document.querySelector(".popup_type_avatar");
 const avatarUrlInput = popupAvatar.querySelector(
@@ -40,25 +41,25 @@ const avatarUrlInput = popupAvatar.querySelector(
 );
 const formAvatar = popupAvatar.querySelector(".popup__form");
 
-// Обработчик для открытия попапа смены аватара
+// === Функция смены аватара ===
 avatarElement.addEventListener("click", () => {
-  openPopup(popupAvatar);
-  avatarUrlInput.value = ""; // очищаем поле ввода перед открытием попапа
-  clearValidation(popupAvatar, validationSettings);
+  openPopup(popupAvatar); // Открывает попап смены аватара
+  avatarUrlInput.value = ""; // Очищает поле ввода
+  clearValidation(popupAvatar, validationSettings); // Убирает ошибки валидации
 });
 
+// === Обработчик отправки формы смены аватара ===
 formAvatar.addEventListener("submit", (evt) => {
   evt.preventDefault();
   renderLoading(true);
 
   const avatarUrl = avatarUrlInput.value;
 
-  // Отправка новой ссылки на аватар на сервер
+  // Обновление аватара на сервере
   updateAvatar(avatarUrl)
     .then((data) => {
-      // Обновляем аватар на странице
-      document.querySelector(".profile__image").src = data.avatar;
-      closePopup(popupAvatar); // Закрытие попапа после успешного обновления
+      document.querySelector(".profile__image").src = data.avatar; // Обновляет аватар на странице
+      closePopup(popupAvatar); // Закрывает попап после обновления
     })
     .catch((err) => {
       console.log("Ошибка при обновлении аватара:", err);
@@ -68,65 +69,57 @@ formAvatar.addEventListener("submit", (evt) => {
     });
 });
 
-// Функция для открытия окна просмотра изображения карточки
+// === Функция для отображения изображения карточки ===
 function handleCardClick(imageSrc, imageAlt) {
-  imagePopupImage.src = imageSrc;
-  imagePopupImage.alt = imageAlt;
-  imagePopupCaption.textContent = imageAlt;
-
-  openPopup(popupImage);
+  imagePopupImage.src = imageSrc; // Устанавливает источник изображения
+  imagePopupImage.alt = imageAlt; // Устанавливает описание изображения
+  imagePopupCaption.textContent = imageAlt; // Устанавливает подпись изображения
+  openPopup(popupImage); // Открывает попап с изображением
 }
 
-// Загрузка и отображение карточек с сервера
-let currentUserId; // переменная для хранения ID текущего пользователя
+// === Загрузка данных пользователя и карточек с сервера ===
+let currentUserId; // Хранит ID текущего пользователя
 
 getUserProfile()
   .then((userData) => {
-    currentUserId = userData._id; // сохраняем ID текущего пользователя
-
-    // Устанавливаем аватар пользователя
-    document.querySelector(".profile__image").src = userData.avatar;
-
-    // Подставляем данные в элементы страницы
-    profileTitle.textContent = userData.name;
-    profileDescription.textContent = userData.about;
-
-    // Загружаем карточки после получения ID пользователя
-    return getInitialCards();
+    currentUserId = userData._id; // Сохраняет ID пользователя
+    document.querySelector(".profile__image").src = userData.avatar; // Устанавливает аватар
+    profileTitle.textContent = userData.name; // Устанавливает имя пользователя
+    profileDescription.textContent = userData.about; // Устанавливает описание профиля
+    return getInitialCards(); // Загружает карточки
   })
   .then((cards) => {
+    // Отображает загруженные карточки
     cards.forEach((card) => {
       const cardElement = createCard(
         card,
-        currentUserId, // передаем currentUserId
-        (element) => handleDelete(element, card._id), // передаём card._id
+        currentUserId,
+        (element) => handleDelete(element, card._id),
         handleCardClick,
         handleLikeClick
       );
-      cardsContainer.append(cardElement);
+      cardsContainer.append(cardElement); // Добавляет карточку на страницу
     });
   })
   .catch((err) => {
     console.log("Ошибка при получении данных:", err);
   });
 
-enableValidation(validationSettings);
-
-// Обработчики событий для открытия и закрытия попапов
+// === Обработчик открытия попапа редактирования профиля ===
 editButton.addEventListener("click", () => {
   openPopup(popupEdit);
-  inputName.value = profileTitle.textContent;
-  inputDescription.value = profileDescription.textContent;
-
-  // Очистка сообщений об ошибках перед открытием
-  clearValidation(popupEdit, validationSettings);
+  inputName.value = profileTitle.textContent; // Заполняет поле имени
+  inputDescription.value = profileDescription.textContent; // Заполняет поле описания
+  clearValidation(popupEdit, validationSettings); // Сбрасывает ошибки валидации
 });
 
+// === Обработчик открытия попапа добавления карточки ===
 addButton.addEventListener("click", () => {
   openPopup(popupNewCard);
-  clearValidation(popupNewCard, validationSettings); // Очистка валидации при открытии формы
+  clearValidation(popupNewCard, validationSettings); // Сбрасывает ошибки валидации
 });
 
+// === Закрытие попапов по клику на крестик или оверлей ===
 closeButtons.forEach((button) => {
   const popup = button.closest(".popup");
   button.addEventListener("click", () => closePopup(popup));
@@ -140,26 +133,21 @@ document.querySelectorAll(".popup").forEach((popup) => {
   });
 });
 
+// === Обработчик отправки формы редактирования профиля ===
 formEditProfile.addEventListener("submit", (evt) => {
   evt.preventDefault();
   renderLoading(true);
 
-  // Получаем значения из полей формы
-  const name = inputName.value;
-  const about = inputDescription.value;
+  const name = inputName.value; // Получает имя из формы
+  const about = inputDescription.value; // Получает описание из формы
 
-  // Отправка данных на сервер для обновления профиля
   updateUserProfile(name, about)
     .then((data) => {
-      // Если обновление прошло успешно, обновляем информацию на странице
-      profileTitle.textContent = data.name;
-      profileDescription.textContent = data.about;
-
-      // Закрытие попапа редактирования профиля
-      closePopup(popupEdit);
+      profileTitle.textContent = data.name; // Обновляет имя на странице
+      profileDescription.textContent = data.about; // Обновляет описание на странице
+      closePopup(popupEdit); // Закрывает попап
     })
     .catch((err) => {
-      // Если произошла ошибка при отправке данных, показываем ошибку в консоли
       console.log("Ошибка при обновлении профиля:", err);
     })
     .finally(() => {
@@ -167,12 +155,11 @@ formEditProfile.addEventListener("submit", (evt) => {
     });
 });
 
-// Обработчик отправки формы добавления новой карточки
+// === Обработчик отправки формы добавления новой карточки ===
 formAddCard.addEventListener("submit", (evt) => {
   evt.preventDefault();
   renderLoading(true);
 
-  // Проверяем, что currentUserId определен
   if (!currentUserId) {
     console.log("Ошибка: currentUserId не определен");
     return;
@@ -184,21 +171,18 @@ formAddCard.addEventListener("submit", (evt) => {
     owner: { _id: currentUserId },
   };
 
-  // Сохраняем карточку на сервере
   addCard(newCardData)
     .then((savedCard) => {
-      // После успешного сохранения на сервере создаем карточку на странице
       const newCardElement = createCard(
-        savedCard, // Используем данные с сервера, включая сгенерированный ID
-        currentUserId, // Передаем ID текущего пользователя
+        savedCard,
+        currentUserId,
         handleDelete,
         handleCardClick,
         handleLikeClick
       );
-      cardsContainer.prepend(newCardElement); // Добавляем карточку на страницу
-
-      formAddCard.reset(); // Сброс формы
-      closePopup(popupNewCard); // Закрытие попапа
+      cardsContainer.prepend(newCardElement); // Добавляет карточку в начало списка
+      formAddCard.reset(); // Сбрасывает форму
+      closePopup(popupNewCard); // Закрывает попап
     })
     .catch((err) => {
       console.log("Ошибка при добавлении карточки на сервер:", err);
@@ -208,18 +192,20 @@ formAddCard.addEventListener("submit", (evt) => {
     });
 });
 
-enableValidation(validationSettings);
-
+// === Функция отображения состояния загрузки ===
 function renderLoading(isLoading, button, loadingText = "Сохранение...") {
   if (isLoading) {
     saveButtons.forEach((btn) => {
-      btn.textContent = loadingText; // Изменяем текст на кнопках
-      btn.disabled = true; // Делаем кнопки неактивными во время загрузки
+      btn.textContent = loadingText; // Устанавливает текст "Сохранение..."
+      btn.disabled = true; // Деактивирует кнопку
     });
   } else {
     saveButtons.forEach((btn) => {
-      btn.textContent = btn.dataset.originalText || "Сохранить"; // Восстанавливаем оригинальный текст
-      btn.disabled = false; // Включаем кнопки обратно
+      btn.textContent = btn.dataset.originalText || "Сохранить"; // Возвращает оригинальный текст
+      btn.disabled = false; // Активирует кнопку
     });
   }
 }
+
+// === Включение валидации форм ===
+enableValidation(validationSettings);
