@@ -1,7 +1,7 @@
 import "../pages/index.css"; // Импорт стилей
 import { createCard, handleDelete, handleLikeClick } from "../components/card";
 import { updateUserProfile } from "./api";
-import { updateAvatar } from './api'; // Проверьте правильность пути
+import { updateAvatar } from "./api"; // Проверьте правильность пути
 import { openPopup, closePopup } from "../components/modal";
 import {
   enableValidation,
@@ -31,7 +31,7 @@ const placeLink = popupNewCard.querySelector("input[name='link']");
 const popupImage = document.querySelector(".popup_type_image");
 const imagePopupImage = popupImage.querySelector(".popup__image");
 const imagePopupCaption = popupImage.querySelector(".popup__caption");
-
+const saveButtons = document.querySelectorAll(".popup__button");
 // Получаем элементы для аватара и попапа редактирования аватара
 const avatarElement = document.querySelector(".profile__avatar");
 const popupAvatar = document.querySelector(".popup_type_avatar");
@@ -49,6 +49,7 @@ avatarElement.addEventListener("click", () => {
 
 formAvatar.addEventListener("submit", (evt) => {
   evt.preventDefault();
+  renderLoading(true);
 
   const avatarUrl = avatarUrlInput.value;
 
@@ -61,6 +62,9 @@ formAvatar.addEventListener("submit", (evt) => {
     })
     .catch((err) => {
       console.log("Ошибка при обновлении аватара:", err);
+    })
+    .finally(() => {
+      renderLoading(false);
     });
 });
 
@@ -138,6 +142,7 @@ document.querySelectorAll(".popup").forEach((popup) => {
 
 formEditProfile.addEventListener("submit", (evt) => {
   evt.preventDefault();
+  renderLoading(true);
 
   // Получаем значения из полей формы
   const name = inputName.value;
@@ -156,12 +161,16 @@ formEditProfile.addEventListener("submit", (evt) => {
     .catch((err) => {
       // Если произошла ошибка при отправке данных, показываем ошибку в консоли
       console.log("Ошибка при обновлении профиля:", err);
+    })
+    .finally(() => {
+      renderLoading(false);
     });
 });
 
 // Обработчик отправки формы добавления новой карточки
 formAddCard.addEventListener("submit", (evt) => {
   evt.preventDefault();
+  renderLoading(true);
 
   // Проверяем, что currentUserId определен
   if (!currentUserId) {
@@ -193,7 +202,24 @@ formAddCard.addEventListener("submit", (evt) => {
     })
     .catch((err) => {
       console.log("Ошибка при добавлении карточки на сервер:", err);
+    })
+    .finally(() => {
+      renderLoading(false);
     });
 });
 
 enableValidation(validationSettings);
+
+function renderLoading(isLoading, button, loadingText = "Сохранение...") {
+  if (isLoading) {
+    saveButtons.forEach((btn) => {
+      btn.textContent = loadingText; // Изменяем текст на кнопках
+      btn.disabled = true; // Делаем кнопки неактивными во время загрузки
+    });
+  } else {
+    saveButtons.forEach((btn) => {
+      btn.textContent = btn.dataset.originalText || "Сохранить"; // Восстанавливаем оригинальный текст
+      btn.disabled = false; // Включаем кнопки обратно
+    });
+  }
+}
