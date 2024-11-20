@@ -1,15 +1,7 @@
-// Объект с настройками для валидации
-const validationSettings = {
-  inputSelector: ".popup__input", // Селектор для полей ввода
-  submitButtonSelector: ".popup__button", // Селектор для кнопки отправки
-  inactiveButtonClass: "popup__button_disabled", // Класс для неактивной кнопки
-  inputErrorClass: "popup__input_error", // Класс для поля с ошибкой
-  errorClass: "error-message_visible", // Класс для отображения ошибки
-};
-
 // Регулярные выражения для проверки допустимых символов
 const nameBioRegex = /^[a-zA-Zа-яА-ЯёЁ\s-]+$/; // Разрешены только буквы, дефисы и пробелы
-const placeNameRegex = /^[a-zA-Zа-яА-ЯёЁ\s-]/; // Проверка на валидность название
+const placeNameRegex = /^[a-zA-Zа-яА-ЯёЁ\s-]+$/;
+// Проверка на валидность название
 const urlRegex = /^(https?:\/\/[^\s]+)/; // Проверка на валидный URL
 
 // Основная функция включения валидации для всех форм
@@ -162,4 +154,4 @@ function clearValidation(form, settings) {
   ); // Перепроверяем состояние кнопки
 }
 
-export { enableValidation, clearValidation, validationSettings };
+export { enableValidation, clearValidation };

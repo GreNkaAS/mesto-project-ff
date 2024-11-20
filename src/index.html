@@ -42,12 +42,13 @@
       <div class="popup__content">
         <button type="button" class="popup__close"></button>
         <h3 class="popup__title">Редактировать профиль</h3>
-        <form class="popup__form" name="edit-profile">
-          <input type="text" name="name" class="popup__input popup__input_type_name" placeholder="Имя" required>
+        <form class="popup__form" name="edit-profile" novalidate>
+          <input type="text" name="name" class="popup__input popup__input_type_name" pattern="^[a-zA-Zа-яА-ЯёЁ\s-]+$"
+            placeholder="Имя" required>
           <span class="error-message error-message_name">
           </span>
-          <input type="text" name="description" class="popup__input popup__input_type_description" placeholder="Занятие"
-            required>
+          <input type="text" name="description" class="popup__input popup__input_type_description"
+            pattern="^[a-zA-Zа-яА-ЯёЁ\s-]+$" placeholder="Занятие" required>
           <span class="error-message error-message_description"></span>
           <button type="submit" class="button popup__button">Сохранить</button>
         </form>
@@ -57,13 +58,13 @@
       <div class="popup__content">
         <button type="button" class="popup__close"></button>
         <h3 class="popup__title">Новое место</h3>
-        <form class="popup__form" name="new-place">
-          <input type="text" name="place-name" class="popup__input popup__input_type_card-name" placeholder="Название"
-            required>
+        <form class="popup__form" name="new-place" novalidate>
+          <input type="text" name="place-name" class="popup__input popup__input_type_card-name"
+            pattern="^[a-zA-Zа-яА-ЯёЁ\s-]+$" placeholder="Название" required>
           <span class="error-message error-message_place-name">
           </span>
-          <input type="url" name="link" class="popup__input popup__input_type_url" placeholder="Ссылка на картинку"
-            required>
+          <input type="url" name="link" class="popup__input popup__input_type_url" pattern="^(https?:\/\/[^\s]+)"
+            placeholder="Ссылка на картинку" required>
           <span class="error-message error-message_link">
           </span>
           <button type="submit" class="button popup__button">Сохранить</button>
@@ -81,9 +82,9 @@
       <div class="popup__content">
         <button type="button" class="popup__close"></button>
         <h3 class="popup__title">Обновить аватар</h3>
-        <form class="popup__form" name="avatar-form">
+        <form class="popup__form" name="avatar-form" novalidate>
           <input type="url" name="avatar" class="popup__input popup__input_type_avatar-url"
-            placeholder="Ссылка на картинку" required>
+            pattern="^(https?:\/\/[^\s]+)" placeholder="Ссылка на картинку" required>
           <span class="error-message error-message_avatar"></span>
           <button type="submit" class="button popup__button">Сохранить</button>
         </form>

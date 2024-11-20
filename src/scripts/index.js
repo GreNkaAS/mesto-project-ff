@@ -4,11 +4,7 @@ import { createCard, handleDelete, handleLikeClick } from "../components/card";
 import { updateUserProfile } from "./api";
 import { updateAvatar } from "./api";
 import { openPopup, closePopup } from "../components/modal";
-import {
-  enableValidation,
-  clearValidation,
-  validationSettings,
-} from "./validation";
+import { enableValidation, clearValidation } from "./validation";
 
 import { getInitialCards, getUserProfile, addCard } from "./api";
 
@@ -41,6 +37,15 @@ const avatarUrlInput = popupAvatar.querySelector(
 );
 const formAvatar = popupAvatar.querySelector(".popup__form");
 
+// Объект с настройками для валидации
+const validationSettings = {
+  inputSelector: ".popup__input", // Селектор для полей ввода
+  submitButtonSelector: ".popup__button", // Селектор для кнопки отправки
+  inactiveButtonClass: "popup__button_disabled", // Класс для неактивной кнопки
+  inputErrorClass: "popup__input_error", // Класс для поля с ошибкой
+  errorClass: "error-message_visible", // Класс для отображения ошибки
+};
+
 // === Функция смены аватара ===
 avatarElement.addEventListener("click", () => {
   openPopup(popupAvatar); // Открывает попап смены аватара
@@ -55,14 +60,13 @@ formAvatar.addEventListener("submit", (evt) => {
 
   const avatarUrl = avatarUrlInput.value;
 
-  // Обновление аватара на сервере
   updateAvatar(avatarUrl)
     .then((data) => {
       document.querySelector(".profile__image").src = data.avatar; // Обновляет аватар на странице
       closePopup(popupAvatar); // Закрывает попап после обновления
     })
     .catch((err) => {
-      console.log("Ошибка при обновлении аватара:", err);
+      console.error("Ошибка при обновлении аватара:", err);
     })
     .finally(() => {
       renderLoading(false);
@@ -80,6 +84,7 @@ function handleCardClick(imageSrc, imageAlt) {
 // === Загрузка данных пользователя и карточек с сервера ===
 let currentUserId; // Хранит ID текущего пользователя
 
+// Загрузка данных пользователя
 getUserProfile()
   .then((userData) => {
     currentUserId = userData._id; // Сохраняет ID пользователя
@@ -102,7 +107,7 @@ getUserProfile()
     });
   })
   .catch((err) => {
-    console.log("Ошибка при получении данных:", err);
+    console.error("Ошибка при загрузке данных пользователя или карточек:", err);
   });
 
 // === Обработчик открытия попапа редактирования профиля ===
@@ -148,7 +153,7 @@ formEditProfile.addEventListener("submit", (evt) => {
       closePopup(popupEdit); // Закрывает попап
     })
     .catch((err) => {
-      console.log("Ошибка при обновлении профиля:", err);
+      console.error("Ошибка при обновлении профиля:", err);
     })
     .finally(() => {
       renderLoading(false);
@@ -161,7 +166,7 @@ formAddCard.addEventListener("submit", (evt) => {
   renderLoading(true);
 
   if (!currentUserId) {
-    console.log("Ошибка: currentUserId не определен");
+    console.error("Ошибка: currentUserId не определен");
     return;
   }
 
@@ -185,7 +190,7 @@ formAddCard.addEventListener("submit", (evt) => {
       closePopup(popupNewCard); // Закрывает попап
     })
     .catch((err) => {
-      console.log("Ошибка при добавлении карточки на сервер:", err);
+      console.error("Ошибка при добавлении карточки на сервер:", err);
     })
     .finally(() => {
       renderLoading(false);

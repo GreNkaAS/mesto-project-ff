@@ -14,17 +14,11 @@ const handleResponse = (res) => {
   return res.json(); // Возвращаем данные в формате JSON, если ответ успешный
 };
 
-// Функция для обработки ошибок
-const handleError = (err, context) => {
-  console.log(`Ошибка при ${context}:`, err); // Логируем ошибку с контекстом
-  return Promise.reject(err); // Отклоняем промис с ошибкой
-};
-
 // Получение профиля пользователя
 export const getUserProfile = () => {
-  return fetch(`${config.baseUrl}/users/me`, { headers: config.headers })
-    .then(handleResponse) // Обрабатываем ответ
-    .catch((err) => handleError(err, "получении данных профиля")); // Логируем ошибку с контекстом
+  return fetch(`${config.baseUrl}/users/me`, { headers: config.headers }).then(
+    handleResponse
+  );
 };
 
 // Обновление профиля
@@ -33,16 +27,14 @@ export const updateUserProfile = (name, about) => {
     method: "PATCH", // Метод PATCH для обновления данных
     headers: config.headers,
     body: JSON.stringify({ name, about }), // Отправляем данные в теле запроса
-  })
-    .then(handleResponse) // Обрабатываем ответ
-    .catch((err) => handleError(err, "обновлении профиля")); // Логируем ошибку с контекстом
+  }).then(handleResponse);
 };
 
 // Получение карточек
 export const getInitialCards = () => {
-  return fetch(`${config.baseUrl}/cards`, { headers: config.headers })
-    .then(handleResponse) // Обрабатываем ответ
-    .catch((err) => handleError(err, "получении карточек")); // Логируем ошибку с контекстом
+  return fetch(`${config.baseUrl}/cards`, { headers: config.headers }).then(
+    handleResponse
+  );
 };
 
 // Добавление новой карточки
@@ -51,9 +43,7 @@ export const addCard = (cardData) => {
     method: "POST", // Метод POST для добавления новой карточки
     headers: config.headers,
     body: JSON.stringify(cardData), // Отправляем данные карточки в теле запроса
-  })
-    .then(handleResponse) // Обрабатываем ответ
-    .catch((err) => handleError(err, "добавлении карточки")); // Логируем ошибку с контекстом
+  }).then(handleResponse);
 };
 
 // Удаление карточки
@@ -61,19 +51,22 @@ export const deleteCard = (cardId) => {
   return fetch(`${config.baseUrl}/cards/${cardId}`, {
     method: "DELETE", // Метод DELETE для удаления карточки
     headers: config.headers,
-  })
-    .then(handleResponse) // Обрабатываем ответ
-    .catch((err) => handleError(err, "удалении карточки")); // Логируем ошибку с контекстом
+  }).then(handleResponse);
 };
 
 // Лайк/отлайк карточки
 export const toggleLike = (cardId, isLiked) => {
+  let method;
+  if (isLiked) {
+    method = "PUT";
+  } else {
+    method = "DELETE";
+  }
+
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
-    method: isLiked ? "PUT" : "DELETE", // Если лайкнули, используем PUT, если отлайкнули — DELETE
+    method: method, // Если лайкнули, используем PUT, если отлайкнули — DELETE
     headers: config.headers,
-  })
-    .then(handleResponse) // Обрабатываем ответ
-    .catch((err) => handleError(err, "обработке лайков карточки")); // Логируем ошибку с контекстом
+  }).then(handleResponse);
 };
 
 // Обновление аватара пользователя
@@ -82,7 +75,5 @@ export const updateAvatar = (avatarUrl) => {
     method: "PATCH", // Метод PATCH для обновления аватара
     headers: config.headers,
     body: JSON.stringify({ avatar: avatarUrl }), // Отправляем ссылку на новый аватар
-  })
-    .then(handleResponse) // Обрабатываем ответ
-    .catch((err) => handleError(err, "обновлении аватара")); // Логируем ошибку с контекстом
+  }).then(handleResponse);
 };
