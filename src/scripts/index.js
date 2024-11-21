@@ -5,7 +5,6 @@ import { updateUserProfile } from "./api";
 import { updateAvatar } from "./api";
 import { openPopup, closePopup } from "../components/modal";
 import { enableValidation, clearValidation } from "./validation";
-
 import { getInitialCards, getUserProfile, addCard } from "./api";
 
 // === Объявление глобальных констант и переменных ===
@@ -39,7 +38,7 @@ const formAvatar = popupAvatar.querySelector(".popup__form");
 
 // Объект с настройками для валидации
 const validationSettings = {
-  inputSelector: ".popup__input", // Селектор для полей ввода
+  inputSelector: ".popup__input", // С\електор для полей ввода
   submitButtonSelector: ".popup__button", // Селектор для кнопки отправки
   inactiveButtonClass: "popup__button_disabled", // Класс для неактивной кнопки
   inputErrorClass: "popup__input_error", // Класс для поля с ошибкой
