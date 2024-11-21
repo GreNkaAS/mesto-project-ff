@@ -82,13 +82,6 @@ function checkInputValidity(input, settings) {
   }
 
   showInputError(input, errorMessage, settings); // Отображаем ошибку (если есть)
-
-  // Добавляем класс для невалидного поля
-  if (errorMessage) {
-    input.classList.add(settings.inputErrorClass); // Добавление класса с ошибкой
-  } else {
-    input.classList.remove(settings.inputErrorClass); // Убираем класс с ошибкой, если поле валидно
-  }
 }
 
 // Функция для отображения сообщения об ошибке
