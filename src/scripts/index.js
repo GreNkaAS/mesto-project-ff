@@ -38,6 +38,7 @@ const formAvatar = popupAvatar.querySelector(".popup__form");
 
 // Объект с настройками для валидации
 const validationSettings = {
+  formSelector: ".popup__form", // Селектор для форм
   inputSelector: ".popup__input", // С\електор для полей ввода
   submitButtonSelector: ".popup__button", // Селектор для кнопки отправки
   inactiveButtonClass: "popup__button_disabled", // Класс для неактивной кнопки
